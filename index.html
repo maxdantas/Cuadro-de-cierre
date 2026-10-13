@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuadro de Cierre | NOC Operations Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            ufi: {
+              50: '#f0f7fc',
+              100: '#def0f9',
+              200: '#c3e2f4',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#005b8e',
+              800: '#074e76',
+              900: '#0c4263',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-card-in {
+      animation: slideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    /* Focus outline polish */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen selection:bg-sky-500 selection:text-white pb-16">
+
+  <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-ufi-700 to-sky-500 flex items-center justify-center text-white shadow-md shadow-sky-600/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg text-slate-900 tracking-tight leading-none">Cuadro de Cierre</h1>
+            <span class="text-[11px] font-semibold bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full uppercase tracking-wider">NOC Pro</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Calculador e Gerador de Encerramento de Ticket</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Security Trust Badge -->
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full text-emerald-800 text-xs font-medium">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"></path>
+          </svg>
+          <span>Execução Local Segura (Zero Vazamento)</span>
+        </div>
+
+        <button type="button" id="btnReset" onclick="confirmReset()" class="text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-lg border border-slate-200 hover:border-rose-200 transition-colors flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Limpar
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <!-- Descartes Cliente Card -->
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow transition-shadow">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-medium mb-1">
+          <span>Descartes Cliente</span>
+          <span class="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </span>
+        </div>
+        <div class="font-mono text-xl sm:text-2xl font-bold tracking-tight text-slate-900" id="statDescartes">00:00:00</div>
+        <p class="text-[11px] text-slate-400 mt-1">Acionamento − Início</p>
+      </div>
+
+      <!-- Tempo Total Falha Card -->
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow transition-shadow">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-medium mb-1">
+          <span>Tempo Total Falha</span>
+          <span class="p-1.5 rounded-lg bg-amber-50 text-amber-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </span>
+        </div>
+        <div class="font-mono text-xl sm:text-2xl font-bold tracking-tight text-amber-600" id="statTotalFalha">00:00:00</div>
+        <p class="text-[11px] text-slate-400 mt-1">Fim − Acionamento</p>
+      </div>
+
+      <!-- Tempo Morto Total Card -->
+      <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow transition-shadow">
+        <div class="flex items-center justify-between text-slate-500 text-xs font-medium mb-1">
+          <span>Tempo Morto Total</span>
+          <span class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </span>
+        </div>
+        <div class="font-mono text-xl sm:text-2xl font-bold tracking-tight text-indigo-600" id="statTempoMorto">00:00:00</div>
+        <p class="text-[11px] text-slate-400 mt-1" id="statTmCountLabel">0 paradas aplicadas</p>
+      </div>
+
+      <!-- Tempo Imputável à Empresa Card -->
+      <div class="bg-gradient-to-br from-ufi-800 to-ufi-900 border border-ufi-700 rounded-2xl p-4 text-white shadow-sm shadow-ufi-900/20">
+        <div class="flex items-center justify-between text-sky-200 text-xs font-medium mb-1">
+          <span>Imputável Ufinet</span>
+          <span class="p-1.5 rounded-lg bg-white/10 text-sky-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          </span>
+        </div>
+        <div class="font-mono text-xl sm:text-2xl font-bold tracking-tight text-white" id="statImputavel">00:00:00</div>
+        <p class="text-[11px] text-sky-200/80 mt-1">Total Falha − TM Total</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Main Inputs Form -->
+      <form id="cuadroForm" class="lg:col-span-7 space-y-5" onsubmit="event.preventDefault();">
+        
+        <!-- Section 1: Tickets -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+            <div class="w-6 h-6 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-xs">1</div>
+            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Identificação dos Tickets</h2>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label for="ticketMaster" class="block text-xs font-semibold text-slate-700 mb-1">Ticket Master <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <input type="text" id="ticketMaster" maxlength="60" placeholder="Ex: INC-00012345-BR"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono text-slate-900 placeholder:text-slate-400 placeholder:font-sans transition bg-slate-50/50 hover:bg-white focus:bg-white" required>
+                <div class="absolute right-3 top-2.5 text-slate-400">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Toggle Secundario -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label for="diffTicketToggle" class="text-xs font-semibold text-slate-800 cursor-pointer select-none">Ticket Secundário Diferente</label>
+                  <p class="text-[11px] text-slate-500">Se desativado, espelha o código do Ticket Master.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="diffTicketToggle" class="sr-only peer" onchange="handleDiffTicketToggle()">
+                  <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ufi-600"></div>
+                </label>
+              </div>
+
+              <div id="secundarioContainer" class="mt-3 hidden">
+                <input type="text" id="ticketSec" maxlength="60" placeholder="Informe o Ticket Secundário"
+                  class="w-full px-3.5 py-2 rounded-lg border border-slate-200 text-sm font-mono text-slate-900 placeholder:text-slate-400 placeholder:font-sans bg-white transition">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Causa e Solução -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+            <div class="w-6 h-6 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-xs">2</div>
+            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Causa e Solução Técnica</h2>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label for="causa" class="block text-xs font-semibold text-slate-700 mb-1">Causa da Ocorrência <span class="text-rose-500">*</span></label>
+              <select id="causa" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 bg-slate-50/50 hover:bg-white focus:bg-white transition cursor-pointer" required>
+                <option value="">Selecione a classificação correspondente...</option>
+                <option value="Link Down">Link Down</option>
+                <option value="Falha de acesso a destino especifico">Falha de acesso a destino especifico</option>
+                <option value="Consulta Administrativa">Consulta Administrativa</option>
+                <option value="Tentativa de furto">Tentativa de furto</option>
+                <option value="Carga Alta">Carga Alta</option>
+                <option value="Descarga elétrica">Descarga elétrica</option>
+                <option value="Erro de Configuração">Erro de Configuração</option>
+                <option value="Falta de Energia">Falta de Energia</option>
+                <option value="Rompimento de Fibra Óptica">Rompimento de Fibra Óptica</option>
+                <option value="Falha Massiva Terceiros">Falha Massiva Terceiros</option>
+                <option value="Cliente relata lentidão no circuito">Cliente relata lentidão no circuito</option>
+              </select>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="solucao" class="text-xs font-semibold text-slate-700">Solução / Fechamento Técnico <span class="text-rose-500">*</span></label>
+                <span id="charCountBadge" class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">0 / 500</span>
+              </div>
+              <textarea id="solucao" maxlength="500" rows="3" placeholder="Descreva os testes executados, acionamento das equipes e evidência de retorno de tráfego..."
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 bg-slate-50/50 hover:bg-white focus:bg-white transition leading-relaxed" required></textarea>
+              <!-- Micro progress indicator -->
+              <div class="w-full bg-slate-100 h-1 rounded-full mt-1.5 overflow-hidden">
+                <div id="charProgressBar" class="h-full bg-sky-500 transition-all duration-200 w-0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Cronologia Principal -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+            <div class="w-6 h-6 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-xs">3</div>
+            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Cronologia Operacional</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Data Inicio -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="dtInicio" class="text-xs font-semibold text-slate-700">Hora / Data Início <span class="text-rose-500">*</span></label>
+                <button type="button" onclick="setNow('dtInicio')" class="text-[11px] text-sky-600 hover:text-sky-800 font-medium hover:underline">Agora</button>
+              </div>
+              <input type="datetime-local" id="dtInicio" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/50 hover:bg-white focus:bg-white font-mono" required>
+            </div>
+
+            <!-- Data Acionamento -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label for="dtAcionamento" class="text-xs font-semibold text-slate-700">Hora / Data Acionamento <span class="text-rose-500">*</span></label>
+                <button type="button" onclick="setNow('dtAcionamento')" class="text-[11px] text-sky-600 hover:text-sky-800 font-medium hover:underline">Agora</button>
+              </div>
+              <input type="datetime-local" id="dtAcionamento" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/50 hover:bg-white focus:bg-white font-mono" required>
+            </div>
+
+            <!-- Data Fim -->
+            <div class="md:col-span-2">
+              <div class="flex items-center justify-between mb-1">
+                <label for="dtFim" class="text-xs font-semibold text-slate-700">Hora / Data Fim (Normalização) <span class="text-rose-500">*</span></label>
+                <button type="button" onclick="setNow('dtFim')" class="text-[11px] text-sky-600 hover:text-sky-800 font-medium hover:underline">Agora</button>
+              </div>
+              <input type="datetime-local" id="dtFim" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 bg-slate-50/50 hover:bg-white focus:bg-white font-mono" required>
+            </div>
+          </div>
+
+          <!-- Date Validation Banner -->
+          <div id="dateAlertBox" class="hidden mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2">
+            <svg class="w-4 h-4 shrink-0 text-rose-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span id="dateAlertText">Atenção: A data/hora final não pode ser anterior à data de início/acionamento.</span>
+          </div>
+        </div>
+
+        <!-- Section 4: Tempos Mortos (Pausas SLA) -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">4</div>
+              <div>
+                <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider leading-none">Pausas SLA (Tempo Morto)</h2>
+                <p class="text-[11px] text-slate-400 mt-1">Opcional. Se não houver paradas, não será incluído na tabela copiada.</p>
+              </div>
+            </div>
+            <button type="button" onclick="addTempoMortoBlock()" id="btnAddTm"
+              class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200/80 transition flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Adicionar Parada
+            </button>
+          </div>
+
+          <!-- Empty State when no TM -->
+          <div id="tmEmptyState" class="p-6 text-center border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+            <svg class="w-8 h-8 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p class="text-xs font-medium text-slate-600">Nenhum tempo morto registrado</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">O chamado correu sem interrupções imputáveis a terceiros/cliente.</p>
+          </div>
+
+          <!-- Dynamic Container for TM entries -->
+          <div id="tmContainer" class="space-y-3"></div>
+        </div>
+      </form>
+
+      <!-- Live Preview & Clipboard Output Area -->
+      <div class="lg:col-span-5 space-y-5 lg:sticky lg:top-20">
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col">
+          
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 tracking-tight">Pré-visualização da Tabela</h3>
+              <p class="text-xs text-slate-400">Pronta para envio ou colar no chamado</p>
+            </div>
+            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Sincronizado
+            </span>
+          </div>
+
+          <!-- Action buttons for modern clipboard copy -->
+          <div class="grid grid-cols-2 gap-2 mb-4">
+            <button type="button" onclick="copyTableAsHTML()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-ufi-700 hover:bg-ufi-800 text-white font-medium text-xs shadow-sm shadow-ufi-700/20 active:scale-[0.98] transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Copiar Tabela (Excel)</span>
+            </button>
+
+            <button type="button" onclick="copyTableAsText()" class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs border border-slate-200 active:scale-[0.98] transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span>Copiar Texto Puro</span>
+            </button>
+          </div>
+
+          <!-- The Rendered Table Container -->
+          <div class="overflow-x-auto rounded-xl border border-slate-200 bg-slate-50/30">
+            <table id="previewTableDOM" class="w-full text-xs text-left border-collapse">
+              <tbody id="previewTableBody">
+                <!-- Dynamically populated via XSS-safe DOM routines -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Micro footer note -->
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Formatação compatível com Excel, Jira e Remedy</span>
+            <span>Ufinet standard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Floating Notification -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2.5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl shadow-slate-900/20 text-xs font-medium">
+    <div class="h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <span id="toastMessage">Tabela copiada com sucesso!</span>
+  </div>
+
+  <!-- Reset Confirmation Dialog Modal -->
+  <div id="resetModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center animate-card-in">
+      <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      </div>
+      <h4 class="text-base font-bold text-slate-900">Limpar todo o formulário?</h4>
+      <p class="text-xs text-slate-500 mt-1 mb-5">Todos os campos preenchidos e tempos mortos calculados serão apagados permanentemente.</p>
+      <div class="flex gap-2">
+        <button type="button" onclick="closeResetModal()" class="w-1/2 py-2.5 px-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition">Cancelar</button>
+        <button type="button" onclick="executeResetForm()" class="w-1/2 py-2.5 px-3 rounded-xl bg-rose-600 text-white text-xs font-semibold hover:bg-rose-700 shadow-md shadow-rose-600/20 transition">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Global State and references */
+    let tempoMortoList = [];
+    let nextTmId = 1;
+
+    /* Escapes dangerous HTML entities to protect against XSS injections */
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /* Format ms into strict [hh]:mm:ss according to Excel formulas in the spreadsheet */
+    function formatDuration(ms) {
+      if (isNaN(ms) || ms <= 0) return '00:00:00';
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${hours < 10 ? '0' + hours : hours}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    /* Standardizes date objects to YYYY-MM-DD HH:mm:00 format */
+    function formatDisplayDate(val) {
+      if (!val) return '-';
+      const d = new Date(val);
+      if (isNaN(d.getTime())) return '-';
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+    }
+
+    /* Sets current local date/time into an input */
+    function setNow(inputId) {
+      const now = new Date();
+      // Format for datetime-local: YYYY-MM-DDTHH:mm
+      const pad = (n) => String(n).padStart(2, '0');
+      const localISO = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.value = localISO;
+        recalculate();
+      }
+    }
+
+    /* Toggles custom secondary ticket field */
+    function handleDiffTicketToggle() {
+      const isChecked = document.getElementById('diffTicketToggle').checked;
+      const container = document.getElementById('secundarioContainer');
+      const secInput = document.getElementById('ticketSec');
+      const masterVal = document.getElementById('ticketMaster').value;
+
+      if (isChecked) {
+        container.classList.remove('hidden');
+        if (!secInput.value) secInput.value = masterVal;
+        secInput.focus();
+      } else {
+        container.classList.add('hidden');
+        secInput.value = '';
+      }
+      recalculate();
+    }
+
+    /* Add tempo morto entry block */
+    function addTempoMortoBlock() {
+      if (tempoMortoList.length >= 8) {
+        showToast('Limite máximo de 8 tempos mortos atingido.');
+        return;
+      }
+
+      const tmId = nextTmId++;
+      tempoMortoList.push({
+        id: tmId,
+        inicio: '',
+        fim: '',
+        causa: ''
+      });
+
+      renderTempoMortoDOM();
+      recalculate();
+    }
+
+    /* Remove tempo morto block */
+    function removeTempoMorto(id) {
+      tempoMortoList = tempoMortoList.filter(tm => tm.id !== id);
+      renderTempoMortoDOM();
+      recalculate();
+    }
+
+    /* Update dynamic TM field state */
+    function updateTMField(id, field, value) {
+      const target = tempoMortoList.find(tm => tm.id === id);
+      if (target) {
+        target[field] = value;
+      }
+      recalculate();
+    }
+
+    /* Re-renders the interactive TM list */
+    function renderTempoMortoDOM() {
+      const container = document.getElementById('tmContainer');
+      const emptyState = document.getElementById('tmEmptyState');
+      const countLabel = document.getElementById('statTmCountLabel');
+
+      container.innerHTML = '';
+
+      if (tempoMortoList.length === 0) {
+        emptyState.classList.remove('hidden');
+        countLabel.textContent = '0 paradas aplicadas';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      countLabel.textContent = `${tempoMortoList.length} ${tempoMortoList.length === 1 ? 'parada aplicada' : 'paradas aplicadas'}`;
+
+      tempoMortoList.forEach((tm, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl space-y-3 animate-card-in';
+        
+        // Header
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between';
+        header.innerHTML = `
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+            <span class="w-5 h-5 rounded bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px]">${index + 1}</span>
+            <span>Parada de SLA</span>
+          </div>
+          <button type="button" onclick="removeTempoMorto(${tm.id})" class="text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg text-xs font-medium transition flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Remover
+          </button>
+        `;
+        itemDiv.appendChild(header);
+
+        // Inputs Grid
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs';
+        
+        // Start TM input
+        const divStart = document.createElement('div');
+        divStart.innerHTML = `<label class="block font-medium text-slate-600 mb-1">Início da Parada</label>`;
+        const inputStart = document.createElement('input');
+        inputStart.type = 'datetime-local';
+        inputStart.className = 'w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white font-mono text-slate-800 text-xs';
+        inputStart.value = tm.inicio;
+        inputStart.oninput = (e) => updateTMField(tm.id, 'inicio', e.target.value);
+        divStart.appendChild(inputStart);
+
+        // End TM input
+        const divEnd = document.createElement('div');
+        divEnd.innerHTML = `<label class="block font-medium text-slate-600 mb-1">Fim da Parada</label>`;
+        const inputEnd = document.createElement('input');
+        inputEnd.type = 'datetime-local';
+        inputEnd.className = 'w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white font-mono text-slate-800 text-xs';
+        inputEnd.value = tm.fim;
+        inputEnd.oninput = (e) => updateTMField(tm.id, 'fim', e.target.value);
+        divEnd.appendChild(inputEnd);
+
+        grid.appendChild(divStart);
+        grid.appendChild(divEnd);
+
+        // Cause input
+        const divCause = document.createElement('div');
+        divCause.className = 'sm:col-span-2';
+        divCause.innerHTML = `<label class="block font-medium text-slate-600 mb-1">Causa do Tempo Morto</label>`;
+        const inputCause = document.createElement('input');
+        inputCause.type = 'text';
+        inputCause.maxLength = 120;
+        inputCause.placeholder = 'Ex: Aguardando retorno/validação do cliente';
+        inputCause.className = 'w-full px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 text-xs';
+        inputCause.value = tm.causa;
+        inputCause.oninput = (e) => updateTMField(tm.id, 'causa', e.target.value);
+        divCause.appendChild(inputCause);
+
+        grid.appendChild(divCause);
+        itemDiv.appendChild(grid);
+        container.appendChild(itemDiv);
+      });
+    }
+
+    /* Recalculates all intervals and updates UI metrics */
+    function recalculate() {
+      const dtInicioRaw = document.getElementById('dtInicio').value;
+      const dtAcionamentoRaw = document.getElementById('dtAcionamento').value;
+      const dtFimRaw = document.getElementById('dtFim').value;
+
+      const dInicio = new Date(dtInicioRaw);
+      const dAcionamento = new Date(dtAcionamentoRaw);
+      const dFim = new Date(dtFimRaw);
+
+      let hasDateLogicError = false;
+      let errorMsg = '';
+
+      // 1. Descartes: Acionamento - Início
+      let msDescartes = 0;
+      if (!isNaN(dInicio.getTime()) && !isNaN(dAcionamento.getTime())) {
+        if (dAcionamento < dInicio) {
+          hasDateLogicError = true;
+          errorMsg = 'A Data de Acionamento não pode ser anterior à Data de Início.';
+        } else {
+          msDescartes = dAcionamento - dInicio;
+        }
+      }
+
+      // 2. Tempo total de Falha: Fim - Acionamento
+      let msTotalFalha = 0;
+      if (!isNaN(dAcionamento.getTime()) && !isNaN(dFim.getTime())) {
+        if (dFim < dAcionamento) {
+          hasDateLogicError = true;
+          errorMsg = 'A Data de Fim não pode ser anterior à Data de Acionamento.';
+        } else {
+          msTotalFalha = dFim - dAcionamento;
+        }
+      }
+
+      // 3. Tempo Morto Total
+      let msTempoMortoTotal = 0;
+      const validTMRows = [];
+
+      tempoMortoList.forEach((tm) => {
+        const s = new Date(tm.inicio);
+        const e = new Date(tm.fim);
+        if (!isNaN(s.getTime()) && !isNaN(e.getTime())) {
+          if (e >= s) {
+            msTempoMortoTotal += (e - s);
+          } else {
+            hasDateLogicError = true;
+            errorMsg = 'A Data de Fim da parada não pode ser anterior ao Início da parada.';
+          }
+        }
+        if (tm.inicio || tm.fim || tm.causa) {
+          validTMRows.push({
+            inicio: formatDisplayDate(tm.inicio),
+            fim: formatDisplayDate(tm.fim),
+            causa: tm.causa.trim() || '-'
+          });
+        }
+      });
+
+      // 4. Imputável à Empresa: Tempo total falha - Tempo Morto
+      const msImputavel = Math.max(0, msTotalFalha - msTempoMortoTotal);
+
+      // Handle validation alert box
+      const alertBox = document.getElementById('dateAlertBox');
+      const alertText = document.getElementById('dateAlertText');
+      if (hasDateLogicError) {
+        alertText.textContent = errorMsg;
+        alertBox.classList.remove('hidden');
+      } else {
+        alertBox.classList.add('hidden');
+      }
+
+      // Update KPI Metric Cards
+      document.getElementById('statDescartes').textContent = formatDuration(msDescartes);
+      document.getElementById('statTotalFalha').textContent = formatDuration(msTotalFalha);
+      document.getElementById('statTempoMorto').textContent = formatDuration(msTempoMortoTotal);
+      document.getElementById('statImputavel').textContent = formatDuration(msImputavel);
+
+      // Read form text values safely
+      const masterVal = document.getElementById('ticketMaster').value.trim() || '-';
+      const isDiff = document.getElementById('diffTicketToggle').checked;
+      const secVal = isDiff ? (document.getElementById('ticketSec').value.trim() || masterVal) : masterVal;
+      const causaVal = document.getElementById('causa').value.trim() || '-';
+      const solucaoVal = document.getElementById('solucao').value.trim() || '-';
+
+      // Update Character Counter UI
+      const solucaoLen = document.getElementById('solucao').value.length;
+      document.getElementById('charCountBadge').textContent = `${solucaoLen} / 500`;
+      const progressPercent = Math.min(100, (solucaoLen / 500) * 100);
+      document.getElementById('charProgressBar').style.width = `${progressPercent}%`;
+
+      // Build Safe Table DOM
+      syncPreviewTableDOM({
+        master: masterVal,
+        secundario: secVal,
+        causa: causaVal,
+        solucao: solucaoVal,
+        dtInicio: formatDisplayDate(dtInicioRaw),
+        dtAcionamento: formatDisplayDate(dtAcionamentoRaw),
+        descartes: formatDuration(msDescartes),
+        dtFim: formatDisplayDate(dtFimRaw),
+        totalFalha: formatDuration(msTotalFalha),
+        tmRows: validTMRows,
+        tmTotal: formatDuration(msTempoMortoTotal),
+        imputavel: formatDuration(msImputavel)
+      });
+    }
+
+    /* Safely updates table rows using strict textContent */
+    function syncPreviewTableDOM(data) {
+      const tbody = document.getElementById('previewTableBody');
+      tbody.innerHTML = '';
+
+      const appendRow = (label, val, highlight = false) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-200/80 hover:bg-slate-100/50 transition-colors';
+
+        const th = document.createElement('th');
+        th.className = 'py-2 px-3 text-slate-600 font-semibold text-[11px] bg-slate-100/60 w-[42%] align-top';
+        th.textContent = label;
+
+        const td = document.createElement('td');
+        td.className = `py-2 px-3 text-[11px] font-mono break-words ${highlight ? 'font-bold text-ufi-700 bg-sky-50/40' : 'text-slate-800'}`;
+        td.textContent = val;
+
+        tr.appendChild(th);
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      };
+
+      // Base rows
+      appendRow('Ticket Master', data.master);
+      appendRow('Ticket Secundário', data.secundario);
+      appendRow('Causa:', data.causa);
+      appendRow('Solução:', data.solucao);
+      appendRow('Hora / Data de Inicio:', data.dtInicio);
+      appendRow('Hora / Data de Acionamento:', data.dtAcionamento);
+      appendRow('Descartes cliente', data.descartes);
+      appendRow('Hora / Data de Fim:', data.dtFim);
+      appendRow('Tempo total de Falha:', data.totalFalha);
+
+      // Only show tempo morto lines if entries exist
+      if (data.tmRows && data.tmRows.length > 0) {
+        data.tmRows.forEach((tm) => {
+          appendRow('Hora / Data TM Inicio:', tm.inicio);
+          appendRow('Hora / Data TM Fim:', tm.fim);
+          appendRow('Causa do tempo morto:', tm.causa);
+        });
+        appendRow('Tempo Morto:', data.tmTotal);
+      }
+
+      appendRow('Tempo Imputavel a Ufinet:', data.imputavel, true);
+    }
+
+    /* Copy as Rich-Text Table (ready to paste directly into Excel and ticketing tools) */
+    async function copyTableAsHTML() {
+      const table = document.getElementById('previewTableDOM');
+      const tableHTML = table.outerHTML;
+      const plainText = getTableAsTextFormat();
+
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          const blobHTML = new Blob([tableHTML], { type: 'text/html' });
+          const blobText = new Blob([plainText], { type: 'text/plain' });
+          const item = new ClipboardItem({
+            'text/html': blobHTML,
+            'text/plain': blobText
+          });
+          await navigator.clipboard.write([item]);
+          showToast('Tabela formatada copiada com sucesso!');
+          return;
+        } catch (err) {
+          console.warn('ClipboardItem API fallback needed:', err);
+        }
+      }
+
+      // Fallback selection copy
+      try {
+        const range = document.createRange();
+        range.selectNode(table);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        showToast('Tabela copiada com sucesso!');
+      } catch (e) {
+        fallbackCopyText(plainText);
+      }
+    }
+
+    /* Converts current table data into tab-separated text (TSV) */
+    function getTableAsTextFormat() {
+      const rows = document.querySelectorAll('#previewTableBody tr');
+      const lines = [];
+      rows.forEach(tr => {
+        const th = tr.querySelector('th') ? tr.querySelector('th').textContent.trim() : '';
+        const td = tr.querySelector('td') ? tr.querySelector('td').textContent.trim() : '';
+        lines.push(`${th}\t${td}`);
+      });
+      return lines.join('\n');
+    }
+
+    /* Copy Table in Plain Text / TSV format */
+    async function copyTableAsText() {
+      const plainText = getTableAsTextFormat();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(plainText);
+          showToast('Texto copiado para a área de transferência!');
+          return;
+        } catch (e) {}
+      }
+      fallbackCopyText(plainText);
+    }
+
+    /* Fallback copy routine */
+    function fallbackCopyText(text) {
+      const tempArea = document.createElement('textarea');
+      tempArea.value = text;
+      tempArea.style.position = 'fixed';
+      tempArea.style.opacity = '0';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Copiado com sucesso!');
+      } catch (err) {
+        showToast('Erro ao copiar dados.');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    /* Toast display animation */
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMessage');
+      msg.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    /* Form reset confirmation controls */
+    function confirmReset() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('resetModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function executeResetForm() {
+      document.getElementById('cuadroForm').reset();
+      tempoMortoList = [];
+      document.getElementById('diffTicketToggle').checked = false;
+      document.getElementById('secundarioContainer').classList.add('hidden');
+      renderTempoMortoDOM();
+      recalculate();
+      closeResetModal();
+      showToast('Formulário limpo com segurança.');
+    }
+
+    /* Data loss prevention before reload */
+    window.addEventListener('beforeunload', (e) => {
+      const master = document.getElementById('ticketMaster').value;
+      const solucao = document.getElementById('solucao').value;
+      if (master || solucao || tempoMortoList.length > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    /* Initial event listeners */
+    document.addEventListener('DOMContentLoaded', () => {
+      // Event delegations for real-time recalculation
+      const inputs = document.querySelectorAll('#cuadroForm input, #cuadroForm select, #cuadroForm textarea');
+      inputs.forEach(el => el.addEventListener('input', recalculate));
+
+      // Initial pass
+      recalculate();
+    });
+  </script>
+</body>
+</html>
